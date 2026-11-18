@@ -131,6 +131,13 @@ describe('TransferService (integração com SQLite em memória + Mock anti-fraud
         ctx.transferService.transfer({ fromAccountId: alice.id, toAccountId: bob.id, amount: 30, idempotencyKey: 'abc' }),
       ).rejects.toThrow(IdempotencyConflictError);
     });
+
+    it.each([[''], ['x'.repeat(129)]])('rejeita Idempotency-Key com tamanho inválido', async (idempotencyKey) => {
+      const ctx = buildTestContext();
+      await expect(
+        ctx.transferService.transfer({ fromAccountId: 'a', toAccountId: 'b', amount: 1, idempotencyKey }),
+      ).rejects.toThrow('Idempotency-Key deve ter entre 1 e 128');
+    });
   });
 
   describe('concorrência', () => {
