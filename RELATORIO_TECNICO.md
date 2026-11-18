@@ -142,13 +142,20 @@ As regras de domínio (`money.ts`, `transfer.ts`, `account.ts`, `transaction.ts`
 2. **GREEN:** `feat(domain): ...` com a implementação mínima que faz o teste passar.
 3. **REFACTOR:** `refactor(domain): ...` com melhorias sem mudar o comportamento. Os testes continuam verdes.
 
-_Inserir aqui os hashes/links dos commits de cada ciclo, por exemplo:_
+Evidências no histórico (cada link de CI abre a execução do GitHub Actions daquele commit):
 
-| Ciclo | RED | GREEN | REFACTOR |
-|---|---|---|---|
-| Conversão monetária | `abc123` | `def456` | `789abc` |
-| Cálculo de transferência | … | … | … |
-| Filtro do extrato | … | … | … |
+| Ciclo | PR | RED (teste falhando) | GREEN (implementação) | REFACTOR |
+|---|---|---|---|---|
+| Conversão monetária (`money.ts`) | [#2](https://github.com/amabilee/projeto-self-testing-ci/pull/2) | [`5977566`](https://github.com/amabilee/projeto-self-testing-ci/commit/5977566) · [CI 🔴](https://github.com/amabilee/projeto-self-testing-ci/actions/runs/44207254044) | [`b050639`](https://github.com/amabilee/projeto-self-testing-ci/commit/b050639) · [CI 🟢](https://github.com/amabilee/projeto-self-testing-ci/actions/runs/44207858992) | [`51568fe`](https://github.com/amabilee/projeto-self-testing-ci/commit/51568fe) · [CI 🟢](https://github.com/amabilee/projeto-self-testing-ci/actions/runs/44208083887) |
+| Validação de conta (`account.ts`) | [#3](https://github.com/amabilee/projeto-self-testing-ci/pull/3) | [`5d6e3c3`](https://github.com/amabilee/projeto-self-testing-ci/commit/5d6e3c3) · [CI 🔴](https://github.com/amabilee/projeto-self-testing-ci/actions/runs/44208448962) | [`f0d8128`](https://github.com/amabilee/projeto-self-testing-ci/commit/f0d8128) · [CI 🟢](https://github.com/amabilee/projeto-self-testing-ci/actions/runs/44208678474) | — |
+| Cálculo de transferência (`transfer.ts`) | [#4](https://github.com/amabilee/projeto-self-testing-ci/pull/4) | [`bedb325`](https://github.com/amabilee/projeto-self-testing-ci/commit/bedb325) · [CI 🔴](https://github.com/amabilee/projeto-self-testing-ci/actions/runs/44209059379) | [`7b7f22c`](https://github.com/amabilee/projeto-self-testing-ci/commit/7b7f22c) · [CI 🟢](https://github.com/amabilee/projeto-self-testing-ci/actions/runs/44209289147) | [`fe27b0e`](https://github.com/amabilee/projeto-self-testing-ci/commit/fe27b0e) · [CI 🟢](https://github.com/amabilee/projeto-self-testing-ci/actions/runs/44209490536) |
+| Filtros do extrato (`transaction.ts`) | [#5](https://github.com/amabilee/projeto-self-testing-ci/pull/5) | [`87869db`](https://github.com/amabilee/projeto-self-testing-ci/commit/87869db) · [CI 🔴](https://github.com/amabilee/projeto-self-testing-ci/actions/runs/44209737404) | [`2868bdc`](https://github.com/amabilee/projeto-self-testing-ci/commit/2868bdc) · [CI 🟢](https://github.com/amabilee/projeto-self-testing-ci/actions/runs/44209936367) | [`8b6f1c0`](https://github.com/amabilee/projeto-self-testing-ci/commit/8b6f1c0) · [CI 🟢](https://github.com/amabilee/projeto-self-testing-ci/actions/runs/44210165071) |
+| Serviços + integração (Mocks/Stubs/SQLite) | [#6](https://github.com/amabilee/projeto-self-testing-ci/pull/6) | [`a0747ed`](https://github.com/amabilee/projeto-self-testing-ci/commit/a0747ed) · [CI 🔴](https://github.com/amabilee/projeto-self-testing-ci/actions/runs/44210395980) | [`18ab5e0`](https://github.com/amabilee/projeto-self-testing-ci/commit/18ab5e0) · [CI 🟢](https://github.com/amabilee/projeto-self-testing-ci/actions/runs/44210603987) | — |
+| API HTTP + E2E | [#7](https://github.com/amabilee/projeto-self-testing-ci/pull/7) | [`db84f43`](https://github.com/amabilee/projeto-self-testing-ci/commit/db84f43) · [CI 🔴](https://github.com/amabilee/projeto-self-testing-ci/actions/runs/44210939834) | [`07e2775`](https://github.com/amabilee/projeto-self-testing-ci/commit/07e2775) · [CI 🟢](https://github.com/amabilee/projeto-self-testing-ci/actions/runs/44211144051) | — |
+| Hotfix 1.0.1 (JSON malformado) | [#12](https://github.com/amabilee/projeto-self-testing-ci/pull/12) | [`8443174`](https://github.com/amabilee/projeto-self-testing-ci/commit/8443174) · [CI 🔴](https://github.com/amabilee/projeto-self-testing-ci/actions/runs/44213066903) | [`52526db`](https://github.com/amabilee/projeto-self-testing-ci/commit/52526db) · [CI 🟢](https://github.com/amabilee/projeto-self-testing-ci/actions/runs/44213313991) | — |
+| Hotfix 1.0.2 (Idempotency-Key) | [#14](https://github.com/amabilee/projeto-self-testing-ci/pull/14) | [`cd39d1a`](https://github.com/amabilee/projeto-self-testing-ci/commit/cd39d1a) · [CI 🔴](https://github.com/amabilee/projeto-self-testing-ci/actions/runs/44213816972) | [`177c834`](https://github.com/amabilee/projeto-self-testing-ci/commit/177c834) · [CI 🟢](https://github.com/amabilee/projeto-self-testing-ci/actions/runs/44213940937) | — |
+
+Todas as execuções com falha correspondem exatamente aos commits RED: [execuções com falha](https://github.com/amabilee/projeto-self-testing-ci/actions?query=is%3Afailure).
 
 ### 4.3 Test Doubles: Mock × Stub
 
@@ -197,12 +204,11 @@ Arquivo: `.github/workflows/ci.yml`
 - **Merges via PR:** usar *Create a merge commit* (não *squash*), para preservar os commits RED → GREEN → REFACTOR no histórico.
 - **Coverage gate:** o `coverageThreshold` do `jest.config.js` faz o Jest terminar com código ≠ 0 abaixo dos limites, o que falha o job.
 - **Bloqueio de merge (branch protection),** configurado no GitHub em *Settings → Branches → Add rule* para `main` e `develop`:
-  - ☑ Require a pull request before merging (1 aprovação)
+  - ☑ Require a pull request before merging (0 aprovações obrigatórias, por ser um projeto individual)
   - ☑ Require status checks to pass: `Lint & análise estática`, `Testes + coverage gate`
-  - ☑ Require branches to be up to date before merging
-  - ☑ Do not allow bypassing the above settings (impede commits diretos)
+  - ☑ Do not allow bypassing the above settings (vale também para administradores; impede commits diretos)
 
-_Inserir print da regra de proteção e de um PR bloqueado por teste quebrado._
+Todas as alterações em `main` e `develop` entraram por Pull Request com o CI verde: [lista de PRs](https://github.com/amabilee/projeto-self-testing-ci/pulls?q=is%3Apr+is%3Amerged). O teste de carga roda nos PRs para `main`, por exemplo nos checks do [PR #10 (release 1.0.0)](https://github.com/amabilee/projeto-self-testing-ci/pull/10/checks).
 
 ---
 
@@ -245,7 +251,7 @@ O relatório JSON fica em `reports/load-test-summary.json` e no artefato `load-t
 | `release/*` | Estabilização de versão. Sai de `develop` e é mesclada em `main` e `develop` |
 | `hotfix/*` | Correção emergencial. Sai de `main` e é mesclada em `main` e `develop` |
 
-**Histórico de versões:** `CHANGELOG.md`, com tags `v1.0.0`, `v1.0.1` e `v1.0.2`.
+**Histórico de versões:** `CHANGELOG.md`, com tags `v1.0.0`, `v1.0.1`, `v1.0.2` e `v1.0.3`.
 
 **Convenção de commits:** [Conventional Commits](https://www.conventionalcommits.org/) (`feat`, `fix`, `test`, `refactor`, `ci`, `docs`, `chore`, com escopo opcional, ex: `feat(transfer): ...`).
 
@@ -253,10 +259,18 @@ O relatório JSON fica em `reports/load-test-summary.json` e no artefato `load-t
 
 | Hotfix | Problema | Correção | PR / Tag |
 |---|---|---|---|
-| `hotfix/1.0.1-json-malformado` | Corpo JSON malformado retornava **500** em vez de 400 | Tratamento de `SyntaxError` no `errorHandler` + teste E2E | _#PR_ / `v1.0.1` |
-| `hotfix/1.0.2-idempotency-key` | `Idempotency-Key` vazia ou muito longa era aceita | Validação de 1 a 128 caracteres + testes de integração | _#PR_ / `v1.0.2` |
+| `hotfix/1.0.1-json-malformado` | Corpo JSON malformado retornava **500** em vez de 400 | Tratamento de `SyntaxError` no `errorHandler` + teste E2E | [#12](https://github.com/amabilee/projeto-self-testing-ci/pull/12) (main) e [#13](https://github.com/amabilee/projeto-self-testing-ci/pull/13) (develop) / [`v1.0.1`](https://github.com/amabilee/projeto-self-testing-ci/tree/v1.0.1) |
+| `hotfix/1.0.2-idempotency-key` | `Idempotency-Key` vazia ou muito longa era aceita | Validação de 1 a 128 caracteres + testes de integração | [#14](https://github.com/amabilee/projeto-self-testing-ci/pull/14) (main) e [#15](https://github.com/amabilee/projeto-self-testing-ci/pull/15) (develop) / [`v1.0.2`](https://github.com/amabilee/projeto-self-testing-ci/tree/v1.0.2) |
 
-_Inserir link para o grafo de commits (`git log --graph`) ou print da aba Network do GitHub._
+### Fluxo de Pull Requests
+
+| PRs | Origem → destino |
+|---|---|
+| [#1](https://github.com/amabilee/projeto-self-testing-ci/pull/1) a [#9](https://github.com/amabilee/projeto-self-testing-ci/pull/9) | `feature/*` → `develop` |
+| [#10](https://github.com/amabilee/projeto-self-testing-ci/pull/10) e [#11](https://github.com/amabilee/projeto-self-testing-ci/pull/11) | `release/1.0.0` → `main` e `develop` (tag [`v1.0.0`](https://github.com/amabilee/projeto-self-testing-ci/tree/v1.0.0)) |
+| [#12](https://github.com/amabilee/projeto-self-testing-ci/pull/12) a [#15](https://github.com/amabilee/projeto-self-testing-ci/pull/15) | `hotfix/*` → `main` e `develop` |
+
+Grafo de branches: [aba Network](https://github.com/amabilee/projeto-self-testing-ci/network). Após cada merge, as branches de feature, release e hotfix foram removidas, restando apenas `main` e `develop`.
 
 ---
 
