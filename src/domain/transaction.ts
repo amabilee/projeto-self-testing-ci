@@ -26,25 +26,19 @@ export interface RawStatementQuery {
   type?: unknown;
 }
 
+function parseDate(value: unknown, field: string, endOfDay: boolean): string | undefined {
+  if (value === undefined || value === '') return undefined;
+  if (typeof value !== 'string') throw new ValidationError(`${field} deve ser uma data ISO-8601`);
+  const isDateOnly = /^\d{4}-\d{2}-\d{2}$/.test(value);
+  const normalized = isDateOnly ? `${value}T${endOfDay ? '23:59:59.999' : '00:00:00.000'}Z` : value;
+  const date = new Date(normalized);
+  if (Number.isNaN(date.getTime())) throw new ValidationError(`${field} deve ser uma data ISO-8601`);
+  return date.toISOString();
+}
+
 export function parseStatementFilter(query: RawStatementQuery): StatementFilter {
-  let from: string | undefined;
-  if (query.from !== undefined && query.from !== '') {
-    if (typeof query.from !== 'string') throw new ValidationError('from deve ser uma data ISO-8601');
-    const raw = /^\d{4}-\d{2}-\d{2}$/.test(query.from) ? `${query.from}T00:00:00.000Z` : query.from;
-    const date = new Date(raw);
-    if (Number.isNaN(date.getTime())) throw new ValidationError('from deve ser uma data ISO-8601');
-    from = date.toISOString();
-  }
-
-  let to: string | undefined;
-  if (query.to !== undefined && query.to !== '') {
-    if (typeof query.to !== 'string') throw new ValidationError('to deve ser uma data ISO-8601');
-    const raw = /^\d{4}-\d{2}-\d{2}$/.test(query.to) ? `${query.to}T23:59:59.999Z` : query.to;
-    const date = new Date(raw);
-    if (Number.isNaN(date.getTime())) throw new ValidationError('to deve ser uma data ISO-8601');
-    to = date.toISOString();
-  }
-
+  const from = parseDate(query.from, 'from', false);
+  const to = parseDate(query.to, 'to', true);
   if (from && to && from > to) {
     throw new ValidationError('from deve ser anterior ou igual a to');
   }
