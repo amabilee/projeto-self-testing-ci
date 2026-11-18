@@ -2,6 +2,10 @@
 
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e [SemVer](https://semver.org/lang/pt-BR/).
 
+## [1.0.3] - Documentação
+### Documentação
+- Relatório técnico com evidências de TDD (commits RED/GREEN/REFACTOR e execuções do CI), proteção de branch e links dos hotfixes.
+
 ## [1.0.2] - Hotfix
 ### Corrigido
 - `Idempotency-Key` vazia ou com mais de 128 caracteres era aceita silenciosamente; agora retorna **400 `VALIDATION_ERROR`**.
