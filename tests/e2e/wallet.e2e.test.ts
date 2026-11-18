@@ -142,6 +142,11 @@ describe('Wallet API — E2E', () => {
       expect(res.body.error.code).toBe('CUSTOMER_VALIDATION_FAILED');
     });
 
+    it('400 para JSON malformado', async () => {
+      const res = await request(app).post('/transfers').set('Content-Type', 'application/json').send('{"amount":').expect(400);
+      expect(res.body.error.code).toBe('INVALID_JSON');
+    });
+
     it('400 para corpo vazio', async () => {
       await request(app).post('/transfers').expect(400);
       await request(app).post('/accounts').expect(400);
