@@ -1,0 +1,117 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop, 'feature/**', 'release/**', 'hotfix/**']
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Lint & análise estática
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: ESLint
+        run: npm run lint
+      - name: Type check (tsc)
+        run: npm run typecheck
+
+  test:
+    name: Testes + coverage gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: mkdir -p reports
+
+      - name: Testes unitários
+        run: npm run test:unit 2>&1 | tee reports/unit.log
+        shell: bash -o pipefail {0}
+
+      - name: Testes de integração
+        run: npm run test:integration 2>&1 | tee reports/integration.log
+        shell: bash -o pipefail {0}
+
+      - name: Testes E2E
+        run: npm run test:e2e 2>&1 | tee reports/e2e.log
+        shell: bash -o pipefail {0}
+      - name: Cobertura (coverage gate)
+        run: npm run test:coverage 2>&1 | tee reports/coverage.log
+        shell: bash -o pipefail {0}
+
+      - name: Resumo da cobertura no job
+        if: always()
+        run: |
+          if [ -f coverage/coverage-summary.json ]; then
+            node -e "const s=require('./coverage/coverage-summary.json').total;
+            const r=['| Métrica | % |','|---|---|',...['lines','statements','branches','functions'].map(k=>'| '+k+' | '+s[k].pct+' |')].join('\n');
+            console.log(r)" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Publicar relatório de cobertura
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 14
+
+      - name: Publicar logs e resultados JUnit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-logs
+          path: reports/
+          retention-days: 14
+
+  load-test:
+    name: Teste de carga (K6)
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.ref == 'refs/heads/main' ||
+      startsWith(github.ref, 'refs/heads/release/') ||
+      startsWith(github.ref, 'refs/heads/hotfix/') ||
+      github.base_ref == 'main'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Subir a API
+        run: |
+          mkdir -p reports
+          nohup node scripts/fake-antifraud-server.js > reports/antifraud.log 2>&1 &
+          PORT=3000 DATABASE_PATH=./data/load.db nohup node dist/server.js > reports/api.log 2>&1 &
+          for i in $(seq 1 30); do curl -sf http://localhost:3000/health && break; sleep 1; done
+      - uses: grafana/setup-k6-action@v1
+      - name: Executar K6 (50 VUs simultâneos)
+        run: k6 run --env VUS=50 --env DURATION=20s load-tests/transfer-load.js
+      - name: Publicar resultado do teste de carga
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: load-test-report
+          path: reports/
