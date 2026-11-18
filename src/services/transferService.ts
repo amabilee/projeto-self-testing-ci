@@ -47,6 +47,9 @@ export class TransferService {
     if (input.description !== undefined && typeof input.description !== 'string') {
       throw new ValidationError('description deve ser texto');
     }
+    if (input.idempotencyKey !== undefined && (input.idempotencyKey.length === 0 || input.idempotencyKey.length > 128)) {
+      throw new ValidationError('Idempotency-Key deve ter entre 1 e 128 caracteres');
+    }
     const amountCents = toCents(input.amount);
     const requestHash = hashRequest(fromAccountId, toAccountId, amountCents);
     const description = input.description ?? null;

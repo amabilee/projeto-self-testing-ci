@@ -2,6 +2,10 @@
 
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e [SemVer](https://semver.org/lang/pt-BR/).
 
+## [1.0.2] - Hotfix
+### Corrigido
+- `Idempotency-Key` vazia ou com mais de 128 caracteres era aceita silenciosamente; agora retorna **400 `VALIDATION_ERROR`**.
+
 ## [1.0.1] - Hotfix
 ### Corrigido
 - Requisições com corpo JSON malformado retornavam **500 Internal Server Error**; agora retornam **400 `INVALID_JSON`**.
