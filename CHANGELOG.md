@@ -2,6 +2,10 @@
 
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e [SemVer](https://semver.org/lang/pt-BR/).
 
+## [1.0.1] - Hotfix
+### Corrigido
+- Requisições com corpo JSON malformado retornavam **500 Internal Server Error**; agora retornam **400 `INVALID_JSON`**.
+
 ## [1.0.0] - Release inicial
 ### Adicionado
 - Criação e consulta de contas digitais com saldo inicial e validação cadastral.
