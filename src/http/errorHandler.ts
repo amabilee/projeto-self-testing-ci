@@ -21,6 +21,10 @@ export function createErrorHandler(logger: Logger) {
       res.status(statusFor(error)).json({ error: { code: error.code, message: error.message } });
       return;
     }
+    if (error instanceof SyntaxError && 'body' in error) {
+      res.status(400).json({ error: { code: 'INVALID_JSON', message: 'Corpo da requisição não é um JSON válido' } });
+      return;
+    }
     logger.error('Erro inesperado', { error: error instanceof Error ? error.stack : String(error) });
     res.status(500).json({ error: { code: 'INTERNAL_ERROR', message: 'Erro interno do servidor' } });
   };
